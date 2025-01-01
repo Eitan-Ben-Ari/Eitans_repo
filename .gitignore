@@ -4,4 +4,4 @@ __pycache__/
 *.pyd
 config.json
 CSR1000/restconf.py
-./.gitignore
+.gitignore
