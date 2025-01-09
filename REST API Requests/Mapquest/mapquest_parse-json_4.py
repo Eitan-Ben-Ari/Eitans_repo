@@ -19,13 +19,25 @@ while True:
 
     print("URL: " + (url))
 
-    if json_status == 0:        #just if successful!
+    if json_status == 0: 
+
+
+      try:
         print("API Status: " + str(json_status) + " = A successful route call.\n")
         print("=============================================")
-        print("Directions from " + (orig) + " to " + (dest))
-        print("Trip Duration:" + (json_data["route"]["formattedTime"]))
-        print("Miles:" + str(json_data["route"]["distance"]))
-        print("Fuel Used (Gal): " + str(json_data["route"]["fuelUsed"]))
+        print("Directions from " + orig + " to " + dest)
+        print("Trip Duration: " + json_data["route"]["formattedTime"])
+        print("Miles: " + str(json_data["route"]["distance"]))
         print("=============================================")
+        
+        if "fuelUsed" in json_data["route"]:
+            print("Fuel Used (Gal): " + str(json_data["route"]["fuelUsed"]))
+        else:
+            print("Fuel Used (Gal): Not available in this response")
+
+        
+      except KeyError as error:
+        print(f'{json_data["route"]}\nThere was a key error: {error}')
+
     if n>=3:
      break
