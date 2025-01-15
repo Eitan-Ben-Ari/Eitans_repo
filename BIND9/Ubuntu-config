@@ -51,42 +51,25 @@ options {
     listen-on port 53 { 192.168.255.56; 127.0.0.1; };  // Bind to specific IPv4 address
     listen-on-v6 port 53 { ::1; };          // Bind to localhost for IPv6
 };
+------------------------------------------------------------------------------------------------------
+#explaination:
 
-
-#acl trustedclients:
-
-Defines which clients are allowed to perform recursive queries.
-
-#dnssec-validation auto:
-
-Ensures that DNSSEC signatures are validated for all queries.
-#forwarders:
-
-Specifies external DNS servers (e.g., Cloudflare) for queries that cannot be resolved locally.
-#allow-recursion { trustedclients; }:
-
-Restricts recursive queries to trusted clients only.
-#listen-on and listen-on-v6:
-
-Configures which IP addresses BIND listens on for DNS queries.
-#directory "/var/cache/bind";:
-
-Sets the working directory where runtime files are stored.
-#dnssec-policy default:
-
-Applies the default DNSSEC policies, simplifying DNSSEC configuration.
-'''
+#acl trustedclients:                  Defines which clients are allowed to perform recursive queries.
+#dnssec-validation auto:              Ensures that DNSSEC signatures are validated for all queries.
+#forwarders:                          Specifies external DNS servers (e.g., Cloudflare) for queries that cannot be resolved locally.
+#allow-recursion { trustedclients; }: Restricts recursive queries to trusted clients only.
+#listen-on and listen-on-v6:          Configures which IP addresses BIND listens on for DNS queries.
+#directory "/var/cache/bind";:        Sets the working directory where runtime files are stored.
+#dnssec-policy default:               Applies the default DNSSEC policies, simplifying DNSSEC configuration.
+--------------------------------------------------------------------------------------------------------
 
 sudo systemctl restart bind9
 sudo named-checkconf #Verify the global configuration
 
 dig R1.Eitan.itlab.com @127.0.0.1 # test 127.0.0.1 is the ubuntu machine(loopback interface)
 
-
-# generate ZSK (Zone Signing Key): Signs individual records (e.g., A, NS).
-sudo dnssec-keygen -a RSASHA256 -b 1024 -n ZONE Eitan.itlab.com
-# generate KSK (Key Signing Key): Signs the DNSKEY record set, which includes both the ZSK and KSK
-sudo dnssec-keygen -a RSASHA256 -b 2048 -n ZONE -f KSK Eitan.itlab.com
+sudo dnssec-keygen -a RSASHA256 -b 1024 -n ZONE Eitan.itlab.com                             # generate ZSK (Zone Signing Key): Signs individual records (e.g., A, NS).
+sudo dnssec-keygen -a RSASHA256 -b 2048 -n ZONE -f KSK Eitan.itlab.com                      # generate KSK (Key Signing Key): Signs the DNSKEY record set, which includes both the ZSK and KSK
 
 sudo chown bind:bind /etc/bind/K*.key /etc/bind/K*.private
 sudo chmod 600 /etc/bind/K*.key /etc/bind/K*.private
@@ -100,13 +83,13 @@ do
     echo "\$INCLUDE $key" >> /etc/bind/db.Eitan.itlab.com
 done" 
 
-sudo chmod +x file.sh # add permission to execute
-sudo ./file.sh # execute
+sudo chmod +x file.sh                # add permission to execute
+sudo ./file.sh                       # execute
 
- sudo dnssec-signzone -A -3 $(head -c 1000 /dev/random | sha1sum | cut -b 1-16)\ #generates a signed zone file
+ sudo dnssec-signzone -A -3 $(head -c 1000 /dev/random | sha1sum | cut -b 1-16)\         #generates a signed zone file
  -N INCREMENT -o Eitan.itlab.com -t -K /etc/bind /etc/bind/db.Eitan.itlab.com
 
-sudo nano /etc/bind/named.conf.local  # change the files path to the signed zone
+sudo nano /etc/bind/named.conf.local                                                     # change the files path to the signed zone
 
 zone "Eitan.itlab.com" {
     type master;
@@ -118,7 +101,7 @@ zone "Eitan.itlab.com" {
 
 sudo systemctl restart bind9 #apply changes and check global configuration
 sudo named-checkconf
-sudo named-checkzone Eitan.itlab.com /etc/bind/db.Eitan.itlab.com.signed #verify the integrity of the signed zone file
+sudo named-checkzone Eitan.itlab.com /etc/bind/db.Eitan.itlab.com.signed                 #verify the integrity of the signed zone file
 
 dig +dnssec R1.Eitan.itlab.com @127.0.0.1 #To verify that DNSSEC is working
 
@@ -145,4 +128,4 @@ R1.Eitan.itlab.com.     3600    IN      A       192.168.255.190
 ;; WHEN: Tue Jan 14 15:16:38 UTC 2025
 ;; MSG SIZE  rcvd: 91
 
-mission accomplished! server is up and running.
+                                                    mission accomplished! server is up and running.
