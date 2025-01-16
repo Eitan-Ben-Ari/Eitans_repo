@@ -103,29 +103,3 @@ sudo systemctl restart bind9 #apply changes and check global configuration
 sudo named-checkconf
 sudo named-checkzone Eitan.itlab.com /etc/bind/db.Eitan.itlab.com.signed                 #verify the integrity of the signed zone file
 
-dig +dnssec R1.Eitan.itlab.com @127.0.0.1 #To verify that DNSSEC is working
-
-response:
-
-
-; <<>> DiG 9.18.30-0ubuntu0.24.04.1-Ubuntu <<>> +dnssec R1.Eitan.itlab.com @127.0.0.1
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 19057
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags: do; udp: 1232
-; COOKIE: cf59a1ae59dbe7920100000067867fd69ed6a926e00d71a6 (good)
-;; QUESTION SECTION:
-;R1.Eitan.itlab.com.            IN      A
-
-;; ANSWER SECTION:
-R1.Eitan.itlab.com.     3600    IN      A       192.168.255.190
-
-;; Query time: 9 msec
-;; SERVER: 127.0.0.1#53(127.0.0.1) (UDP)
-;; WHEN: Tue Jan 14 15:16:38 UTC 2025
-;; MSG SIZE  rcvd: 91
-
-                                                    mission accomplished! server is up and running.
