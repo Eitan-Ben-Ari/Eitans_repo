@@ -19,11 +19,11 @@ Switch  IN      A       192.168.68.224
 #added the zone configuration in BIND, Informs the BIND server about your zone and where to find its configuration file
 sudo nano /etc/bind/named.conf.local
 
+ 
 zone "Eitan.itlab.com" {
     type master;
     file "/etc/bind/db.Eitan.itlab.com";
-    dnssec-policy default;
-    inline-signing yes;
+    allow-update { none; };
 };
 
 #This file defines global options for the BIND server, including DNSSEC validation and recursion settings.
