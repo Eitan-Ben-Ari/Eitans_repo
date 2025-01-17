@@ -54,16 +54,14 @@ options {
 #acl trustedclients:                  Defines which clients are allowed to perform recursive queries.
 #dnssec-validation auto:              Ensures that DNSSEC signatures are validated for all queries.
 #forwarders:                          Specifies external DNS servers (e.g., Cloudflare) for queries that cannot be resolved locally.
-#allow-recursion { trustedclients; }: Restricts recursive queries to trusted clients only.
 #listen-on and listen-on-v6:          Configures which IP addresses BIND listens on for DNS queries.
 #directory "/var/cache/bind";:        Sets the working directory where runtime files are stored.
-#dnssec-policy default:               Applies the default DNSSEC policies, simplifying DNSSEC configuration.
 --------------------------------------------------------------------------------------------------------
 
 sudo systemctl restart bind9
 sudo named-checkconf #Verify the global configuration
 
-dig R1.Eitan.itlab.com @127.0.0.1 # test 127.0.0.1 is the ubuntu machine(loopback interface)
+dig R1.Eitan.itlab.com @127.0.0.1
 
 sudo dnssec-keygen -a RSASHA256 -b 1024 -n ZONE Eitan.itlab.com                             # generate ZSK (Zone Signing Key): Signs individual records (e.g., A, NS).
 sudo dnssec-keygen -a RSASHA256 -b 2048 -n ZONE -f KSK Eitan.itlab.com                      # generate KSK (Key Signing Key): Signs the DNSKEY record set, which includes both the ZSK and KSK
@@ -71,7 +69,7 @@ sudo dnssec-keygen -a RSASHA256 -b 2048 -n ZONE -f KSK Eitan.itlab.com          
 sudo chown bind:bind /etc/bind/K*.key /etc/bind/K*.private
 sudo chmod 600 /etc/bind/K*.key /etc/bind/K*.private
 
-sudo sh -c 'cat K*.key >> /etc/bind/db.Eitan.itlab.com'
+sudo sh -c 'cat K*.key >> /etc/bind/db.Eitan.itlab.com'                                     # Run the entire command in a shell 
 
 dnssec-signzone -A -o Eitan.itlab.com -t /etc/bind/db.Eitan.itlab.com                   #generates a signed zone file
 
